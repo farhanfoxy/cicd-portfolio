@@ -22,20 +22,10 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Build Docker image
+      - name: Deploy with Docker Compose
         run: |
-          docker build -t cicd-portfolio .
-
-      - name: Remove old container
-        run: |
-          docker rm -f cicd-portfolio-app || true
-
-      - name: Run new container
-        run: |
-          docker run -d \
-            --name cicd-portfolio-app \
-            -p 5000:5000 \
-            cicd-portfolio
+          docker compose down
+          docker compose up -d --build
 
       - name: Verify deployment
         run: |

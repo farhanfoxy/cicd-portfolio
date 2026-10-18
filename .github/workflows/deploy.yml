@@ -1,0 +1,34 @@
+name: Local CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t cicd-portfolio .
+
+      - name: Remove old container
+        run: |
+          docker rm -f cicd-portfolio-app || true
+
+      - name: Run new container
+        run: |
+          docker run -d \
+            --name cicd-portfolio-app \
+            -p 5000:5000 \
+            cicd-portfolio
+
+      - name: Verify deployment
+        run: |
+          sleep 3
+          curl --fail http://localhost:5000

@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    image: ${APP_NAME}-app:latest
     container_name: ${APP_NAME}-app
     restart: unless-stopped
 

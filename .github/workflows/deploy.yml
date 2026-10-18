@@ -1,17 +1,26 @@
 name: Local CD Pipeline
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - "CI Pipeline"
+    types:
+      - completed
 
 jobs:
   deploy:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
+      - name: Checkout tested commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Build Docker image
         run: |

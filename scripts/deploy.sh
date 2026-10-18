@@ -80,10 +80,33 @@ docker compose up -d --force-recreate nginx
 
 echo "Testing public endpoint..."
 
+echo "Waiting for Nginx health check..."
+
+for i in {1..15}; do
+    NGINX_STATUS=$(docker inspect \
+        --format='{{.State.Health.Status}}' \
+        "${APP_NAME}-nginx" 2>/dev/null || true)
+
+    echo "Nginx health status: $NGINX_STATUS"
+
+    if [ "$NGINX_STATUS" = "healthy" ]; then
+        break
+    fi
+
+    if [ "$NGINX_STATUS" = "unhealthy" ]; then
+        echo "Nginx became unhealthy."
+        exit 1
+    fi
+
+    sleep 2
+done
+
+echo "Testing public endpoint..."
+
 curl --fail \
-    --retry 10 \
+    --retry 5 \
     --retry-delay 2 \
-    --retry-connrefused \
-    "http://localhost:${PUBLIC_PORT}"
+    --retry-all-errors \
+    "http://localhost:${PUBLIC_PORT}/health"
 
 echo "Deployment successful."

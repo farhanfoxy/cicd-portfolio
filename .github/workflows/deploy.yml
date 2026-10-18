@@ -7,6 +7,14 @@ on:
     types:
       - completed
 
+env:
+  APP_NAME: ${{ github.event.repository.name }}
+  PUBLIC_PORT: "80"
+
+concurrency:
+  group: local-deployment
+  cancel-in-progress: true
+
 jobs:
   deploy:
     if: >
@@ -22,12 +30,22 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
+      - name: Create deployment configuration
+        run: |
+          echo "APP_NAME=$APP_NAME" > .env
+          echo "PUBLIC_PORT=$PUBLIC_PORT" >> .env
+
       - name: Deploy with Docker Compose
         run: |
-          docker compose down
-          docker compose up -d --build
+          docker compose up -d --build --remove-orphans
 
       - name: Verify deployment
         run: |
-          sleep 3
-          curl --fail http://localhost:5000
+          curl --fail \
+            --retry 5 \
+            --retry-delay 2 \
+            http://localhost:$PUBLIC_PORT
+
+      - name: Show running services
+        run: |
+          docker compose ps

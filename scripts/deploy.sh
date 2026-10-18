@@ -75,8 +75,8 @@ if [ "$STATUS" != "healthy" ]; then
     exit 1
 fi
 
-echo "Starting Nginx..."
-docker compose up -d nginx
+echo "Restarting Nginx with updated upstream..."
+docker compose up -d --force-recreate nginx
 
 echo "Testing public endpoint..."
 

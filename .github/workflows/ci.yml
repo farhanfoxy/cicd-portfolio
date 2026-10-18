@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  test:
+  test-and-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,7 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest
+
+      - name: Build Docker image
+        run: |
+          docker build -t cicd-portfolio .

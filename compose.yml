@@ -67,6 +67,33 @@ services:
       - prometheus
 
     restart: unless-stopped
+  loki:
+    image: grafana/loki:latest
+    container_name: ${APP_NAME}-loki
+
+    command:
+      - "-config.file=/etc/loki/loki.yml"
+
+    volumes:
+      - ./monitoring/loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki-data:/loki
+  alloy:
+    image: grafana/alloy:latest
+    container_name: ${APP_NAME}-alloy
+
+    command:
+      - run
+      - /etc/alloy/config.alloy
+
+    volumes:
+      - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    depends_on:
+      - loki
+
+    restart: unless-stopped
 
 volumes:
   grafana-data:
+  loki-data:

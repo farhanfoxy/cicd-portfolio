@@ -1,5 +1,3 @@
-![Uploading ChatGPT Image Oct 21, 2026, 10_50_03 PM-1.png…]()
-
 # Personal DevOps Platform
 
 > **Reusable CI/CD, Deployment, Rollback, and Observability Foundation for My Software Projects**

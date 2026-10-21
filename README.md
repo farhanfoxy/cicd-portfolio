@@ -113,6 +113,11 @@ flowchart TD
     ALLOY --> LOKI[Loki]
     LOKI --> GRAFANA
 ```
+<p align="center">
+  <img src="docs/images/personal-devops-platform-architecture.png"
+       alt="Personal DevOps Platform Architecture"
+       width="100%">
+</p>
 
 ---
 
@@ -1689,6 +1694,18 @@ SawitDB Laravel
 ```
 
 Both applications should eventually use the same underlying reusable CI/CD foundation.
+
+---
+
+## Project Demonstration
+
+The following visual shows the platform running end-to-end, including CI/CD execution, Grafana metrics, centralized logging, and automatic rollback.
+
+<p align="center">
+  <img src="docs/images/project-proof.png"
+       alt="Personal DevOps Platform Project Proof"
+       width="100%">
+</p>
 
 ---
 

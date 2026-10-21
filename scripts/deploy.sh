@@ -34,6 +34,12 @@ rollback() {
     fi
 }
 
+fail() {
+    echo "$1"
+    rollback
+    exit 1
+}
+
 trap rollback ERR
 
 echo "Building new application image..."
@@ -58,10 +64,9 @@ for i in {1..15}; do
         break
     fi
 
-    if [ "$STATUS" = "unhealthy" ]; then
-        echo "Application became unhealthy."
-        exit 1
-    fi
+if [ "$STATUS" = "unhealthy" ]; then
+    fail "Application became unhealthy."
+fi
 
     sleep 2
 done
@@ -71,8 +76,7 @@ STATUS=$(docker inspect \
     "${APP_NAME}-app")
 
 if [ "$STATUS" != "healthy" ]; then
-    echo "Application did not become healthy."
-    exit 1
+    fail "Application did not become healthy."
 fi
 
 echo "Restarting Nginx with updated upstream..."
@@ -93,17 +97,15 @@ for i in {1..15}; do
         break
     fi
 
-    if [ "$NGINX_STATUS" = "unhealthy" ]; then
-        echo "Nginx became unhealthy."
-        exit 1
-    fi
+if [ "$NGINX_STATUS" = "unhealthy" ]; then
+    fail "Nginx became unhealthy."
+fi
 
     sleep 2
 done
 
 if [ "$NGINX_STATUS" != "healthy" ]; then
-    echo "Nginx did not become healthy."
-    exit 1
+    fail "Nginx did not become healthy."
 fi
 
 echo "Testing public endpoint..."

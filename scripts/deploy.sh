@@ -101,6 +101,11 @@ for i in {1..15}; do
     sleep 2
 done
 
+if [ "$NGINX_STATUS" != "healthy" ]; then
+    echo "Nginx did not become healthy."
+    exit 1
+fi
+
 echo "Testing public endpoint..."
 
 curl --fail \
